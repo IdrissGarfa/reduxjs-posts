@@ -1,30 +1,41 @@
-import { useSelector } from "react-redux"
-import { selectAllPosts } from "./postsSlice";
-import PostAuthor from "./PostAuthor";
-import TimeAgo from "./TimeAgo";
-import ReactionButtons from "./ReactionButtons";
+import { useSelector, useDispatch } from "react-redux"
+import { selectAllPosts, getPostStatus, getPostsError, fetchPosts } from "./postsSlice";
+import { useEffect } from "react";
+
+import PostsExcerpt from "./PostsExcerpt";
 
 const Posts = () => {
+
+    const dispatch = useDispatch();
+
     const posts = useSelector(selectAllPosts);
+    const postStatus = useSelector(getPostStatus);
+    const error = useSelector(getPostsError);
 
-    const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
+    useEffect(() => {
+        if (postStatus === 'idle'){
+            dispatch(fetchPosts());
+        }
+    }, [postStatus, dispatch]);
 
-    const rendredPosts = orderedPosts.map(post => (
-        <article className="flex flex-col gap-3 w-full bg-gray-100 p-2 text-gray-800 rounded-md cursor-pointer" key={post.id}>
-            <h3 className="font-semibold">{post.title}</h3>
-            <p className="break-words">{post.content.substring(0, 100)}</p>
-            <p>
-                <PostAuthor userId={post.userId} />
-                <TimeAgo timestamp={post.date} />
-            </p>
-            <ReactionButtons post={post}/>
-        </article>
-    ))
+
+    let content;
+
+    if (postStatus === 'loading'){
+        content = <p>"Loading ... "</p>;
+    }else if (postStatus === 'succeeded'){
+        const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
+        content = orderedPosts.map(post => <PostsExcerpt key={post.id} post={post} />);
+    }else if(postStatus === 'failed'){
+        content = <p>{error}</p>
+    }
+
+
     return (
         <section className="p-3 py-6 md:p-6">
             <h2 className="text-semibold text-3xl">Posts</h2>
             <div className="my-4 flex flex-col gap-2 lg:w-1/3">
-                {rendredPosts}
+                {content}
             </div>
         </section>
     )
