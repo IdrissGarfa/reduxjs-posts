@@ -1,6 +1,6 @@
 // Slice is where we divide up our state so this will have everything to do with the posts
 
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = [
   {
@@ -19,9 +19,21 @@ const postsSlices = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    postAdded(state, action) {
-      state.push(action.payload);
-    },
+    postAdded: {
+      reducer(state, action){
+        state.push(action.payload);
+      }, 
+      prepare(title, content, userId){
+        return {
+          payload:{
+            id: nanoid(),
+            title,
+            content,
+            userId
+          }
+        }
+      } 
+    }
   },
 });
 
