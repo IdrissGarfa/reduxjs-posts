@@ -2,6 +2,8 @@ import { useSelector, useDispatch } from "react-redux"
 import { selectAllPosts, getPostStatus, getPostsError, fetchPosts } from "./postsSlice";
 import { useEffect } from "react";
 
+import { FiSearch } from "react-icons/fi"
+
 import PostsExcerpt from "./PostsExcerpt";
 
 const Posts = () => {
@@ -33,8 +35,13 @@ const Posts = () => {
 
     return (
         <section className="p-3 py-6 md:p-6">
-            <h2 className="text-semibold text-3xl">Posts</h2>
-            <div className="my-4 flex flex-col gap-2 lg:w-1/3">
+            <div className="my-10 flex items-center justify-center gap-4">
+                <div className="bg-slate-50 rounded-lg p-3 w-full md:w-1/2 flex items-center gap-3">
+                    <FiSearch className="text-gray-700 text-2xl" />
+                    <input className="bg-transparent w-full border-none outline-none ring-0" type="text" placeholder="Search post" />
+                </div>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-6 justify-center">
                 {content}
             </div>
         </section>

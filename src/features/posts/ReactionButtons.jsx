@@ -26,7 +26,7 @@ const ReactionButtons = ({ post }) => {
         )
     })
     return (
-        <div className="flex gap-2 flex-wrap">{reactionButtons}</div>
+        <div className="flex gap-3 flex-wrap">{reactionButtons}</div>
     )
 }
 
