@@ -41,7 +41,8 @@ export const updatePost = createAsyncThunk(
       const response = await axios.put(`${POSTS_URL}/${id}`, initialPost);
       return response.data;
     } catch (error) {
-      return error.message;
+      // return error.message;
+      return initialPost;
     }
   }
 );
@@ -59,8 +60,6 @@ export const deletePost = createAsyncThunk(
     }
   }
 );
-
-
 
 const postsSlices = createSlice({
   name: "posts",

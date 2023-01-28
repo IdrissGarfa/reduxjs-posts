@@ -1,5 +1,5 @@
-import { useSelector, useDispatch } from "react-redux"
-import { selectAllPosts, getPostStatus, getPostsError, fetchPosts } from "./postsSlice";
+import { useSelector } from "react-redux"
+import { selectAllPosts, getPostStatus, getPostsError } from "./postsSlice";
 import { useEffect } from "react";
 
 import { FiSearch } from "react-icons/fi"
@@ -8,18 +8,9 @@ import PostsExcerpt from "./PostsExcerpt";
 
 const Posts = () => {
 
-    const dispatch = useDispatch();
-
     const posts = useSelector(selectAllPosts);
     const postStatus = useSelector(getPostStatus);
     const error = useSelector(getPostsError);
-
-    useEffect(() => {
-        if (postStatus === 'idle'){
-            dispatch(fetchPosts());
-        }
-    }, [postStatus, dispatch]);
-
 
     let content;
 
