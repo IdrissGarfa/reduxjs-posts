@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectPostById, updatePost } from "./postsSlice";
+import { selectPostById, updatePost, deletePost } from "./postsSlice";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { selectAllUsers } from "../users/usersSlice";
+import PostNotFound from "./PostNotFound";
 
 const EditPostForm = () => {
     const { postId } = useParams();
@@ -20,12 +21,8 @@ const EditPostForm = () => {
     const dispatch = useDispatch();
 
     if (!post) {
-        return (
-            <section>
-                <h2>Post not found! 😥</h2>
-            </section>
-        )
-    }
+        return <PostNotFound />
+    };
 
     const onTitleChanged = e => setTitle(e.target.value);
     const onContentChanged = e => setContent(e.target.value);
@@ -51,7 +48,23 @@ const EditPostForm = () => {
                 setRequestStatus("idle");
             }
         }
+    }
 
+    const onDeletePostClicked = () => {
+        try {
+            setRequestStatus('pending');
+            dispatch(deletePost({ id: post.id })).unwrap();
+
+            setTitle("");
+            setContent("");
+            setUserId("");
+            navigate(`/`)
+
+        } catch (error) {
+            console.error('Failed to update the post', error);
+        } finally {
+            setRequestStatus("idle");
+        }
     }
 
 
@@ -98,7 +111,7 @@ const EditPostForm = () => {
                             className="bg-transparent border rounded-md py-3 px-3 ring-0 outline-none resize-none min-h-[140px]"
                         />
                     </div>
-                    <div>
+                    <div className="flex gap-3">
                         <button
                             type="button"
                             className="bg-purple-600 text-white rounded-md px-4 py-2 text-sm font-semibold cursor-pointer"
@@ -107,6 +120,14 @@ const EditPostForm = () => {
                         >
                             Save Post
                         </button>
+                        <button
+                            type="button"
+                            className="bg-red-500 text-white rounded-md px-4 py-2 text-sm font-semibold cursor-pointer"
+                            onClick={onDeletePostClicked}
+                        >
+                            Delete Post
+                        </button>
+
                     </div>
                 </form>
             </section>

@@ -46,6 +46,22 @@ export const updatePost = createAsyncThunk(
   }
 );
 
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (initialPost) => {
+    const { id } = initialPost;
+    try {
+      const response = await axios.delete(`${POSTS_URL}/${id}`);
+      if (response?.status === 200) return initialPost; 
+      return `${response?.status}: ${response?.statusText}`;
+    } catch (error) {
+      return error.message;
+    }
+  }
+);
+
+
+
 const postsSlices = createSlice({
   name: "posts",
   initialState,
@@ -90,7 +106,7 @@ const postsSlices = createSlice({
         state.status = "succeeded";
         // adding date and reaction
         let min = 1;
-        const loadedPosts = action.payload.map((post) => {
+        const loadedPosts = action.payload.slice(0,10).map((post) => {
           post.date = sub(new Date(), { minutes: min++ }).toISOString();
           post.reactions = {
             thumbsUp: 0,
@@ -103,7 +119,7 @@ const postsSlices = createSlice({
         });
 
         // add any fetched posts to the array
-        state.posts = state.posts.concat(loadedPosts);
+        state.posts = loadedPosts;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
@@ -132,6 +148,16 @@ const postsSlices = createSlice({
         action.payload.date = new Date().toISOString();
         const posts = state.posts.filter(post => post.id !== id)
         state.posts = [...posts, action.payload];
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        if (!action.payload?.id){
+          console.log("Delete could not complete");
+          console.log(action.payload);
+          return;
+        }
+        const { id } =action.payload;
+        const posts = state.posts.filter(post => post.id !== id)
+        state.posts = posts;
       })
   }
 });
