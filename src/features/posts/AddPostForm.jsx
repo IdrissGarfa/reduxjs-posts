@@ -89,7 +89,7 @@ const AddPostForm = () => {
                     <div className="my-6">
                         <button
                             type="button"
-                            className="bg-white rounded-md px-4 py-2 text-sm text-gray-900 font-semibold cursor-pointer"
+                            className="bg-black text-white rounded-md px-4 py-2 text-sm text-gray-900 font-semibold cursor-pointer"
                             onClick={onSavePostClicked}
                             disabled={!canSave}
                         >
